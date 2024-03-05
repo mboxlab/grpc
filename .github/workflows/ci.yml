@@ -1,0 +1,28 @@
+name: Build & Lint
+on: [push, pull_request]
+
+jobs:
+  build:
+      runs-on: windows-latest
+
+      steps:
+        - uses: actions/checkout@v2
+
+        - name: Setup Toolchain
+          uses: actions-rs/toolchain@v1
+          with:
+            toolchain: stable
+            components: clippy
+            target: x86_64-pc-windows-msvc
+
+        - name: Build
+          uses: actions-rs/cargo@v1
+          with:
+            command: build
+            args: --verbose
+
+        - name: Clippy
+          uses: actions-rs/clippy-check@v1
+          with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            args: --all-features
